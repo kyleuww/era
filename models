@@ -1,0 +1,679 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Legacy vs Evolving Model Comparison</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Antonio:wght@700&family=Palanquin:wght@400;500;600&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Palanquin', sans-serif;
+            background: #E6ECF8;
+            min-height: 100vh;
+            padding: 20px;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            animation: fadeIn 0.6s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 50px;
+            color: #0044B5;
+            position: relative;
+        }
+
+        .header-icon {
+            display: inline-block;
+            margin-bottom: 20px;
+            animation: rotate 10s linear infinite;
+        }
+
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .header h1 {
+            font-family: 'Antonio', sans-serif;
+            font-weight: 700;
+            text-transform: uppercase;
+            font-size: 2.8em;
+            margin-bottom: 10px;
+            animation: slideDown 0.8s ease-out;
+        }
+
+        @keyframes slideDown {
+            from { transform: translateY(-50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .subtitle {
+            font-family: 'Palanquin', sans-serif;
+            font-size: 1.2em;
+            color: #0044B5;
+            opacity: 0.85;
+            animation: fadeIn 1s ease-out 0.3s both;
+        }
+
+        .comparison-wrapper {
+            display: flex;
+            gap: 40px;
+            position: relative;
+            margin-bottom: 40px;
+        }
+
+        .arrow-container {
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 5;
+            pointer-events: none;
+        }
+
+        .evolution-arrow {
+            width: 80px;
+            height: 80px;
+            background: #0044B5;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 10px 30px rgba(0,68,181,0.3);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        .vs-text {
+            font-family: 'Antonio', sans-serif;
+            font-weight: 700;
+            color: white;
+            font-size: 24px;
+            text-transform: uppercase;
+        }
+
+        .model-column {
+            flex: 1;
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,68,181,0.1);
+            position: relative;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .model-column:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0,68,181,0.15);
+        }
+
+        .model-column.legacy {
+            background: #f8f8f8;
+        }
+
+        .model-column.evolving {
+            background: white;
+            border: 2px solid #0044B5;
+        }
+
+        .model-header {
+            text-align: center;
+            padding-bottom: 20px;
+            border-bottom: 3px solid;
+            margin-bottom: 30px;
+        }
+
+        .legacy .model-header {
+            border-color: #9e9e9e;
+        }
+
+        .evolving .model-header {
+            border-color: #0044B5;
+        }
+
+        .model-icon {
+            margin-bottom: 15px;
+        }
+
+        .model-title {
+            font-family: 'Antonio', sans-serif;
+            font-weight: 700;
+            text-transform: uppercase;
+            font-size: 2em;
+            margin-bottom: 10px;
+        }
+
+        .legacy .model-title {
+            color: #424242;
+        }
+
+        .evolving .model-title {
+            color: #0044B5;
+        }
+
+        .badge {
+            display: inline-block;
+            background: #0044B5;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.4em;
+            vertical-align: super;
+            margin-left: 10px;
+            animation: bounce 2s infinite;
+            font-family: 'Palanquin', sans-serif;
+            text-transform: none;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
+        }
+
+        .model-type {
+            font-family: 'Palanquin', sans-serif;
+            color: #666;
+            font-size: 1.1em;
+            font-style: italic;
+        }
+
+        .comparison-item {
+            margin-bottom: 20px;
+            padding: 20px;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .comparison-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: rgba(255,255,255,0.4);
+            transition: left 0.5s ease;
+        }
+
+        .comparison-item:hover::before {
+            left: 100%;
+        }
+
+        .legacy .comparison-item {
+            background: white;
+            border-left: 4px solid #9e9e9e;
+        }
+
+        .evolving .comparison-item {
+            background: #E6ECF8;
+            border-left: 4px solid #0044B5;
+        }
+
+        .comparison-item:hover {
+            transform: translateX(5px);
+            box-shadow: 0 5px 15px rgba(0,68,181,0.1);
+        }
+
+        .legacy .comparison-item:hover {
+            background: white;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .evolving .comparison-item:hover {
+            background: #E6ECF8;
+        }
+
+        .item-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .item-text {
+            font-family: 'Palanquin', sans-serif;
+            font-size: 1.05em;
+            line-height: 1.6;
+            color: #333;
+            flex: 1;
+        }
+
+        .evolving .item-text {
+            font-weight: 500;
+        }
+
+        .item-number {
+            font-family: 'Antonio', sans-serif;
+            font-size: 1.5em;
+            font-weight: 700;
+            opacity: 0.2;
+            margin: 0 15px;
+        }
+
+        .expand-icon {
+            transition: transform 0.3s ease;
+            opacity: 0.6;
+        }
+
+        .comparison-item.expanded .expand-icon {
+            transform: rotate(180deg);
+        }
+
+        .item-explanation {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.5s ease, padding 0.3s ease;
+            margin-top: 0;
+            padding: 0;
+            opacity: 0;
+        }
+
+        .comparison-item.expanded .item-explanation {
+            max-height: 500px;
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid rgba(0,0,0,0.1);
+            opacity: 1;
+            transition: max-height 0.5s ease, padding 0.3s ease, opacity 0.3s ease 0.2s;
+        }
+
+        .explanation-text {
+            font-family: 'Palanquin', sans-serif;
+            font-size: 0.95em;
+            line-height: 1.6;
+            color: #555;
+        }
+
+        .interactive-toggle {
+            text-align: center;
+            margin: 40px 0;
+        }
+
+        .toggle-btn {
+            background: white;
+            color: #0044B5;
+            border: 2px solid #0044B5;
+            padding: 15px 40px;
+            font-family: 'Palanquin', sans-serif;
+            font-size: 1.1em;
+            font-weight: 600;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 20px rgba(0,68,181,0.1);
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .toggle-btn:hover {
+            background: #0044B5;
+            color: white;
+            transform: scale(1.05);
+            box-shadow: 0 8px 30px rgba(0,68,181,0.2);
+        }
+
+        .toggle-btn:active {
+            transform: scale(0.98);
+        }
+
+        .highlight-mode .comparison-item {
+            opacity: 0.3;
+            transition: opacity 0.5s ease;
+        }
+
+        .highlight-mode .comparison-item.highlighted {
+            opacity: 1;
+            box-shadow: 0 0 20px rgba(0, 68, 181, 0.3);
+        }
+
+        @media (max-width: 768px) {
+            .comparison-wrapper {
+                flex-direction: column;
+            }
+            
+            .arrow-container {
+                top: 50%;
+                transform: translate(-50%, -50%) rotate(90deg);
+            }
+            
+            .header h1 {
+                font-size: 2em;
+            }
+            
+            .model-title {
+                font-size: 1.5em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="header-icon">
+                <i data-lucide="refresh-cw" size="48"></i>
+            </div>
+            <h1>Transforming Our Approach</h1>
+            <p class="subtitle">Journey from Legacy to Evolving Models</p>
+        </div>
+
+        <div class="comparison-wrapper">
+            <div class="model-column legacy">
+                <div class="model-header">
+                    <div class="model-icon">
+                        <i data-lucide="archive" size="40"></i>
+                    </div>
+                    <h2 class="model-title">Legacy Model</h2>
+                    <p class="model-type">Traditional Approach</p>
+                </div>
+                
+                <div class="comparison-item" data-pair="1">
+                    <div class="item-header">
+                        <span class="item-text">Transaction Based</span>
+                        <span class="item-number">1</span>
+                        <i data-lucide="chevron-down" size="20" class="expand-icon"></i>
+                    </div>
+                    <div class="item-explanation">
+                        <p class="explanation-text">Traditional funding model based on longstanding relationships between United Way and agencies. Focuses on one-time exchanges rather than building lasting partnerships.</p>
+                    </div>
+                </div>
+                
+                <div class="comparison-item" data-pair="2">
+                    <div class="item-header">
+                        <span class="item-text">Story of United Way</span>
+                        <span class="item-number">2</span>
+                        <i data-lucide="chevron-down" size="20" class="expand-icon"></i>
+                    </div>
+                    <div class="item-explanation">
+                        <p class="explanation-text">Communications focus on the organization's history and processes rather than community impact and transformation.</p>
+                    </div>
+                </div>
+                
+                <div class="comparison-item" data-pair="3">
+                    <div class="item-header">
+                        <span class="item-text">United Way Processes</span>
+                        <span class="item-number">3</span>
+                        <i data-lucide="chevron-down" size="20" class="expand-icon"></i>
+                    </div>
+                    <div class="item-explanation">
+                        <p class="explanation-text">Internal focus on organizational procedures and traditional allocation methods that may not reflect current community needs.</p>
+                    </div>
+                </div>
+                
+                <div class="comparison-item" data-pair="4">
+                    <div class="item-header">
+                        <span class="item-text">Universal goals, strategies, approaches</span>
+                        <span class="item-number">4</span>
+                        <i data-lucide="chevron-down" size="20" class="expand-icon"></i>
+                    </div>
+                    <div class="item-explanation">
+                        <p class="explanation-text">One-size-fits-all approach that doesn't account for different needs across diverse populations. May not effectively address disparities.</p>
+                    </div>
+                </div>
+                
+                <div class="comparison-item" data-pair="5">
+                    <div class="item-header">
+                        <span class="item-text">Historical agency allocations / legacy investments</span>
+                        <span class="item-number">5</span>
+                        <i data-lucide="chevron-down" size="20" class="expand-icon"></i>
+                    </div>
+                    <div class="item-explanation">
+                        <p class="explanation-text">Funding decisions based on past relationships rather than current community needs or demonstrated impact. Same organizations repeatedly receive similar amounts.</p>
+                    </div>
+                </div>
+                
+                <div class="comparison-item" data-pair="6">
+                    <div class="item-header">
+                        <span class="item-text">Allocations/grantmaking as the primary strategy</span>
+                        <span class="item-number">6</span>
+                        <i data-lucide="chevron-down" size="20" class="expand-icon"></i>
+                    </div>
+                    <div class="item-explanation">
+                        <p class="explanation-text">Limited to distributing funds without engaging in capacity building, advocacy, policy work, or other strategies for systemic change.</p>
+                    </div>
+                </div>
+                
+                <div class="comparison-item" data-pair="7">
+                    <div class="item-header">
+                        <span class="item-text">Focus on program results</span>
+                        <span class="item-number">7</span>
+                        <i data-lucide="chevron-down" size="20" class="expand-icon"></i>
+                    </div>
+                    <div class="item-explanation">
+                        <p class="explanation-text">Emphasis on individual program outputs rather than collective community impact or addressing root causes of issues.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="arrow-container">
+                <div class="evolution-arrow">
+                    <span class="vs-text">VS</span>
+                </div>
+            </div>
+
+            <div class="model-column evolving">
+                <div class="model-header">
+                    <div class="model-icon">
+                        <i data-lucide="trending-up" size="40"></i>
+                    </div>
+                    <h2 class="model-title">Evolving Model
+                        <span class="badge">New</span>
+                    </h2>
+                    <p class="model-type">Progressive Approach</p>
+                </div>
+                
+                <div class="comparison-item" data-pair="1">
+                    <div class="item-header">
+                        <span class="item-text">Relationship Based</span>
+                        <span class="item-number">1</span>
+                        <i data-lucide="chevron-down" size="20" class="expand-icon"></i>
+                    </div>
+                    <div class="item-explanation">
+                        <p class="explanation-text">Building lasting partnerships with organizations and communities. Focus on trust, collaboration, and shared power in decision-making.</p>
+                    </div>
+                </div>
+                
+                <div class="comparison-item" data-pair="2">
+                    <div class="item-header">
+                        <span class="item-text">Story of Change UW is Driving in Your Community</span>
+                        <span class="item-number">2</span>
+                        <i data-lucide="chevron-down" size="20" class="expand-icon"></i>
+                    </div>
+                    <div class="item-explanation">
+                        <p class="explanation-text">Highlighting measurable community impact and transformation stories. Focus on outcomes and positive changes in residents' lives.</p>
+                    </div>
+                </div>
+                
+                <div class="comparison-item" data-pair="3">
+                    <div class="item-header">
+                        <span class="item-text">Community Engagement and Donor-Centered Experience</span>
+                        <span class="item-number">3</span>
+                        <i data-lucide="chevron-down" size="20" class="expand-icon"></i>
+                    </div>
+                    <div class="item-explanation">
+                        <p class="explanation-text">Actively involving community members in identifying needs and solutions. Creating meaningful experiences for donors that connect them to impact.</p>
+                    </div>
+                </div>
+                
+                <div class="comparison-item" data-pair="4">
+                    <div class="item-header">
+                        <span class="item-text">Equitable Impact Agenda using Targeted Universalism</span>
+                        <span class="item-number">4</span>
+                        <i data-lucide="chevron-down" size="20" class="expand-icon"></i>
+                    </div>
+                    <div class="item-explanation">
+                        <p class="explanation-text">Setting universal goals with targeted strategies based on how different groups are situated. Explicitly addressing disparities to achieve equitable outcomes for all.</p>
+                    </div>
+                </div>
+                
+                <div class="comparison-item" data-pair="5">
+                    <div class="item-header">
+                        <span class="item-text">Strategic, data-informed investments</span>
+                        <span class="item-number">5</span>
+                        <i data-lucide="chevron-down" size="20" class="expand-icon"></i>
+                    </div>
+                    <div class="item-explanation">
+                        <p class="explanation-text">Using disaggregated data and community input to identify greatest needs. Investing in evidence-based solutions with measurable impact on disparities.</p>
+                    </div>
+                </div>
+                
+                <div class="comparison-item" data-pair="6">
+                    <div class="item-header">
+                        <span class="item-text">Blend of strategies: allocations, partnerships, policy, capacity building</span>
+                        <span class="item-number">6</span>
+                        <i data-lucide="chevron-down" size="20" class="expand-icon"></i>
+                    </div>
+                    <div class="item-explanation">
+                        <p class="explanation-text">Comprehensive approach including funding, coalition building, advocacy, and strengthening organizations. Addresses both symptoms and root causes of issues.</p>
+                    </div>
+                </div>
+                
+                <div class="comparison-item" data-pair="7">
+                    <div class="item-header">
+                        <span class="item-text">Focus on community change and shared results</span>
+                        <span class="item-number">7</span>
+                        <i data-lucide="chevron-down" size="20" class="expand-icon"></i>
+                    </div>
+                    <div class="item-explanation">
+                        <p class="explanation-text">Collective impact approach measuring community-level outcomes. Partners work together toward shared goals with aligned strategies and metrics.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="interactive-toggle">
+            <button class="toggle-btn" onclick="toggleHighlight()">
+                <i data-lucide="target" size="20"></i>
+                <span>Compare Differences</span>
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // Initialize Lucide icons after DOM loads
+        document.addEventListener('DOMContentLoaded', function() {
+            if (typeof lucide !== 'undefined') {
+                lucide.createIcons();
+            }
+        });
+
+        let highlightMode = false;
+        let currentHighlight = 0;
+
+        // Add click to expand functionality
+        document.querySelectorAll('.comparison-item').forEach(item => {
+            item.addEventListener('click', function(e) {
+                // Don't expand if in highlight mode
+                if (highlightMode) return;
+                
+                // Toggle expanded class
+                this.classList.toggle('expanded');
+                
+                // Re-initialize icons
+                if (typeof lucide !== 'undefined') {
+                    lucide.createIcons();
+                }
+            });
+        });
+
+        function toggleHighlight() {
+            highlightMode = !highlightMode;
+            const btn = document.querySelector('.toggle-btn');
+            const btnText = btn.querySelector('span');
+            const container = document.querySelector('.container');
+            
+            if (highlightMode) {
+                btnText.textContent = 'Show All';
+                btn.innerHTML = '<i data-lucide="eye" size="20"></i><span>Show All</span>';
+                container.classList.add('highlight-mode');
+                cycleHighlight();
+            } else {
+                btnText.textContent = 'Compare Differences';
+                btn.innerHTML = '<i data-lucide="target" size="20"></i><span>Compare Differences</span>';
+                container.classList.remove('highlight-mode');
+                clearHighlights();
+            }
+            
+            // Re-initialize icons after button change
+            if (typeof lucide !== 'undefined') {
+                lucide.createIcons();
+            }
+        }
+
+        function cycleHighlight() {
+            if (!highlightMode) return;
+            
+            clearHighlights();
+            currentHighlight = (currentHighlight % 7) + 1;
+            
+            const items = document.querySelectorAll(`[data-pair="${currentHighlight}"]`);
+            items.forEach(item => item.classList.add('highlighted'));
+            
+            setTimeout(() => cycleHighlight(), 2000);
+        }
+
+        function clearHighlights() {
+            document.querySelectorAll('.comparison-item').forEach(item => {
+                item.classList.remove('highlighted');
+            });
+        }
+
+        // Add hover pairing effect
+        document.querySelectorAll('.comparison-item').forEach(item => {
+            item.addEventListener('mouseenter', function() {
+                if (!highlightMode) {
+                    const pairNum = this.getAttribute('data-pair');
+                    const pairs = document.querySelectorAll(`[data-pair="${pairNum}"]`);
+                    pairs.forEach(p => {
+                        if (p.parentElement.classList.contains('legacy')) {
+                            p.style.background = '#E6ECF8';
+                        } else {
+                            p.style.background = '#f0f5ff';
+                        }
+                    });
+                }
+            });
+            
+            item.addEventListener('mouseleave', function() {
+                if (!highlightMode) {
+                    const pairNum = this.getAttribute('data-pair');
+                    const pairs = document.querySelectorAll(`[data-pair="${pairNum}"]`);
+                    pairs.forEach(p => p.style.background = '');
+                }
+            });
+        });
+
+        // Ensure icons load after a short delay if needed
+        setTimeout(() => {
+            if (typeof lucide !== 'undefined') {
+                lucide.createIcons();
+            }
+        }, 100);
+    </script>
+</body>
+</html>
